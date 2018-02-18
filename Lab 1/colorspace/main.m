@@ -7,23 +7,12 @@ close all
 I = imread('peppers.png');
 image(I)
 
-% close all
+J = ConvertColorSpace(I,'opponent');
 
-% J = ConvertColorSpace(I,'opponent');
-% image(J)
-% 
-% J = ConvertColorSpace(I,'rgb');
+J = ConvertColorSpace(I,'rgb');
 
-% close all
-% J = ConvertColorSpace(I,'hsv');
-J = rgb2hsv(I);
-h = J(:,:,1)
-s = J(:,:,2);
-v = J(:,:,3);
-image(h)
-% close all
-% J = ConvertColorSpace(I,'ycbcr');
+J = ConvertColorSpace(I,'gray');
 
-% close all
-% J = ConvertColorSpace(I,'gray');
-% image(J)
+J = ConvertColorSpace(I, 'hsv');
+
+J = ConvertColorSpace(I,'ycbcr');
