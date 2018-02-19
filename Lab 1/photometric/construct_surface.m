@@ -8,7 +8,7 @@ function [ height_map ] = construct_surface( p, q, path_type )
 
 
 if nargin == 2
-    path_type = 'column';
+    path_type = 'row';
 end
 
 [h, w] = size(p);
@@ -25,7 +25,16 @@ switch path_type
         % for each row
         %   for each element of the row except for leftmost
         %       height_value = previous_height_value + corresponding_p_value
+        height_map(1, 1) = 0;
+        for pixel = 2:h
+            height_map(pixel, 1) = height_map(pixel - 1, 1) + q(pixel, 1);
+        end
         
+        for row = 1:h
+            for pixel = 2:w
+                height_map(row, pixel) = height_map(row, pixel - 1) + p(row, pixel);
+            end
+        end
 
        
         % =================================================================
@@ -34,6 +43,16 @@ switch path_type
         
         % =================================================================
         % YOUR CODE GOES HERE
+        height_map(1, 1) = 0;
+        for pixel = 2:w
+            height_map(1, pixel) = height_map(1, pixel - 1) + p(1, pixel);
+        end
+        
+        for col = 1:w
+            for pixel = 2:h
+                height_map(pixel, col) = height_map(pixel - 1, col) + q(pixel, col);
+            end
+        end
         
 
         % =================================================================
@@ -42,7 +61,9 @@ switch path_type
         
         % =================================================================
         % YOUR CODE GOES HERE
-
+        height_map_row = construct_surface(p, q, 'row');
+        height_map_col = construct_surface(p, q, 'column');
+        height_map = (height_map_row + height_map_col) ./ 2;
         
         % =================================================================
 end

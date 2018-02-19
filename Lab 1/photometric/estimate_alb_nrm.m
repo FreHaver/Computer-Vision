@@ -1,4 +1,4 @@
-function [ albedo, normal ] = estimate_alb_nrm( image_stack, scriptV, shadow_trick)
+function [ albedo, normal] = estimate_alb_nrm( image_stack, scriptV, shadow_trick)
 %COMPUTE_SURFACE_GRADIENT compute the gradient of the surface
 %   image_stack : the images of the desired surface stacked up on the 3rd
 %   dimension
@@ -17,11 +17,10 @@ end
 albedo = zeros(h, w, 1);
 normal = zeros(h, w, 3);
 
-for row = 1:w
-    for col = 1:h
+for row = 1:h
+    for col = 1:w
         i = squeeze(image_stack(row, col, :));
         scriptI = diag(i);
-        
         if shadow_trick
             [g, ~] = linsolve(scriptI * scriptV, scriptI * i);
         else
