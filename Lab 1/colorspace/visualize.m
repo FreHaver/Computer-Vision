@@ -1,5 +1,8 @@
 function visualize(new_image, input_image, method)
 
+% if the requested method is gray, the input image is used to compute the
+% four different grayscale color spaces. They are put together in one
+% figure with their corresponding labels.
 if strcmp(method, 'gray')
     disp("visualizing gray images")
     im_lightness = rgb2grays(input_image, 'lightness');
@@ -20,6 +23,8 @@ if strcmp(method, 'gray')
     imshow(im_matlab);
     title('rgb2gray');
     suptitle('visualisation of gray color space')
+% for all the other methods, the already converted image is split into
+% three channels and the image is shown with its channels.
 else
     fprintf('Visualizing %s image with its channels \n',method);
     first_channel = new_image(:, :, 1);

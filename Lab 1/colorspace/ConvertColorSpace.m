@@ -9,24 +9,23 @@ function [new_image] = ConvertColorSpace(input_image, colorspace)
 %   hsv
 %   ycbcr
 %   gray
-%
-% P.S: Do not forget the visualization part!
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % convert image into double precision for conversions
 input_image = im2double(input_image);
 
 if strcmp(colorspace, 'opponent')
-    new_image = rgb2opponent(input_image); % fill in this function
+    new_image = rgb2opponent(input_image);
 elseif strcmp(colorspace, 'rgb')  
-    new_image = rgb2normedrgb(input_image); % fill in this function
+    new_image = rgb2normedrgb(input_image); 
 elseif strcmp(colorspace, 'hsv') 
     new_image = rgb2hsv(input_image);
 elseif strcmp(colorspace, 'ycbcr')
     new_image = rgb2ycbcr(input_image);
 elseif strcmp(colorspace, 'gray')
-    new_image = rgb2grays(input_image, 'lightness'); % fill in this function
+    % for rgb2grays, not only the input image is given as an argument but
+    % also which method to use to convert the image to the grayspace
+    new_image = rgb2grays(input_image, 'lightness');
 else
 % if user inputs an unknow colorspace just notify and do not plot anything
     fprintf('Error: Unknown colorspace type [%s]...\n',colorspace);
@@ -34,6 +33,8 @@ else
     return;
 end
 
-visualize(new_image, input_image, colorspace); % fill in this function
+% because the visualization of the grayspace needs the input image, this is
+% also given as an argument.
+visualize(new_image, input_image, colorspace);
 
 end
