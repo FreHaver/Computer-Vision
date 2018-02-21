@@ -16,56 +16,45 @@ height_map = zeros(h, w);
 
 switch path_type
     case 'column'
-        % =================================================================
-        % YOUR CODE GOES HERE
-        % top left corner of height_map is zero
-        % for each pixel in the left column of height_map
-        %   height_value = previous_height_value + corresponding_q_value
-        
-        % for each row
-        %   for each element of the row except for leftmost
-        %       height_value = previous_height_value + corresponding_p_value
+       
+        % first add all partial derivatives in first column
         height_map(1, 1) = 0;
         for pixel = 2:h
             height_map(pixel, 1) = height_map(pixel - 1, 1) + q(pixel, 1);
         end
         
+        % then add all partial derivatives in rows (except first element)
         for row = 1:h
             for pixel = 2:w
                 height_map(row, pixel) = height_map(row, pixel - 1) + p(row, pixel);
             end
         end
-
-       
-        % =================================================================
                
     case 'row'
         
-        % =================================================================
-        % YOUR CODE GOES HERE
+        % first add all partial derivatives in first row
         height_map(1, 1) = 0;
         for pixel = 2:w
             height_map(1, pixel) = height_map(1, pixel - 1) + p(1, pixel);
         end
         
+        % then add all partial derivatives in columns (except first
+        % element)
         for col = 1:w
             for pixel = 2:h
                 height_map(pixel, col) = height_map(pixel - 1, col) + q(pixel, col);
             end
         end
-        
-
-        % =================================================================
           
     case 'average'
         
-        % =================================================================
-        % YOUR CODE GOES HERE
+        % shape by integration for row-major and column-major
         height_map_row = construct_surface(p, q, 'row');
         height_map_col = construct_surface(p, q, 'column');
-        height_map = (height_map_row + height_map_col) ./ 2;
         
-        % =================================================================
+        % take average of the two
+        height_map = (height_map_row + height_map_col) ./ 2;
+
 end
 
 

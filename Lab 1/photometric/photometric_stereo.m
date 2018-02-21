@@ -7,9 +7,9 @@ disp('Part 1: Photometric Stereo')
 % obtain many images in a fixed view under different illumination
 disp('Loading images...')
 image_dir = './SphereColor/';   % TODO: get the path of the script
-%image_ext = '*.png';
+%image_ext = '*.png';false
 
-n_channels = 2;
+n_channels = 3;
 [image_stack, scriptV] = load_syn_images(image_dir, n_channels);
 [h, w, n] = size(image_stack);
 fprintf('Finish loading %d images.\n\n', n);
@@ -25,7 +25,7 @@ disp('Integrability checking')
 
 threshold = 0.005;
 SE(SE <= threshold) = NaN; % for good visualization
-fprintf('Number of outliers: %d\n\n', sum(sum(SE > threshold)));
+fprintf('Number of outliers: %d\n', sum(sum(SE > threshold)));
 fprintf('Number of albedo errors: %d\n\n', sum(sum(abs(albedo) > 1)));
 
 %% compute the surface height
@@ -53,7 +53,7 @@ fprintf('Number of outliers: %d\n\n', sum(sum(SE > threshold)));
 
  
 %% compute the surface height
-height_map = construct_surface( p, q );
+height_map = construct_surface( p, q , 'average' );
  
 show_results(albedo, normals, SE);
 show_model(albedo, height_map);

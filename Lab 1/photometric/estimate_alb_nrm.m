@@ -17,17 +17,25 @@ end
 albedo = zeros(h, w, 1);
 normal = zeros(h, w, 3);
 
+% loop over each pixel
 for row = 1:h
     for col = 1:w
+        
+        % squeeze out the unit dimension
         i = squeeze(image_stack(row, col, :));
-        scriptI = diag(i);
+        
+        % solve linear system per pixel and apply shadow trick if necessary
         if shadow_trick
+            scriptI = diag(i);
             [g, ~] = linsolve(scriptI * scriptV, scriptI * i);
         else
             [g, ~] = linsolve(scriptV, i);
         end
         
+        % extract the albedo
         albedo(row, col, 1) = norm(g);
+        
+        % calculate the normal if denominator larger than 0
         if norm(g) > 0
             normal(row, col, :) = g / norm(g);
         end
