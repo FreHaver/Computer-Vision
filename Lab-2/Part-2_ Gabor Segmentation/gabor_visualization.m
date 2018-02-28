@@ -18,19 +18,3 @@ function graphs = creategraphs(pars, idx, name)
         title([name num2str(pars(i))])
     end
 end
-
-
-% figure;
-% for i=1:length(theta)
-%     myGabor = createGabor(1, theta(i), 1, 1, 1);
-%     myGabor_real = myGabor(:,:,1);
-%     subplot(3,2,i);
-%     imshow(myGabor_real)
-%     title(['theta ' num2str(theta(i))])
-% end
-
-% myGabor(:,:,1) = myGabor_real;
-% myGabor(:,:,2) = myGabor_imaginary;
-% figure;
-% subplot(121), imshow(myGabor_real,[]);
-% subplot(122), imshow(myGabor_imaginary, []);
