@@ -1,4 +1,5 @@
 function imOut = compute_LoG(image, LOG_type, varargin)
+% function to compute the LoG values with three different methods
 
 switch LOG_type
     case 1
