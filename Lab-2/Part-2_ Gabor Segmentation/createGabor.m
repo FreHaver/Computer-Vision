@@ -42,7 +42,7 @@ XY = [reshape(x, 1, []);reshape(y, 1, [])];
 % \\ Hint: Use the rotation matrix to compute the rotated pixel
 %          coordinates: rot(theta) * XY.
 rotMat = generateRotationMatrix(theta);
-rot_XY = rotMat*XY;
+rot_XY = rotMat * XY;
 rot_x = rot_XY(1,:);
 rot_y = rot_XY(2,:);
 
