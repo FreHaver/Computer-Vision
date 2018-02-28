@@ -1,0 +1,14 @@
+sizes = [3, 5, 7];
+image_saltpepper = im2double(imread('images/image1_saltpepper.jpg'));
+image_gaussian = im2double(imread('images/image1_gaussian.jpg'));
+actual_im = im2double(imread('images/image1.jpg'));
+denoiseImages('box', sizes, image_saltpepper);
+
+function denoiseIms = denoiseImages(filter, argin, im)
+    figure;
+    for i = length(argin)
+        denoised = denoise(im, filter, argin);
+        subplot(1, 3, i);
+        imshowpair(im, denoised, 'montage')
+    end
+end
