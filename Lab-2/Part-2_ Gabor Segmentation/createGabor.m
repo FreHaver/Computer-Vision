@@ -77,7 +77,7 @@ function rotMat = generateRotationMatrix(theta)
 % ----------------------------------------------------------
 % Returns the rotation matrix. 
 % \\ Hint: https://en.wikipedia.org/wiki/Rotation_matrix \\
-rotMat = [cos(theta),  -sin(theta); sin(theta), cos(theta)]; % \\TODO: code the rotation matrix given theta.
+rotMat = [cos(theta),  sin(theta); -sin(theta), cos(theta)]; % \\TODO: code the rotation matrix given theta.
 end
 
 % ----------------------------------------------------------
