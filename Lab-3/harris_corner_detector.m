@@ -1,12 +1,12 @@
-function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold, neighborhood)
+function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold, neighborhood, sigma_smooth)
     % convert the image to double to be able to do computations
     gray_image = im2double(rgb2gray(rgb_image));
         
     % set n to neighborhood for notation
     n = neighborhood;
     
-    % construct a Gaussian filter 
-    G = gauss2D(0.5, 3);
+    % construct a Gaussian filter to compute the x and y gradients
+    G = gauss2D(0.4, 3);
     
     % get the x and y gradient of the Gaussian filter
     [Gx, Gy] = gradient(G);
@@ -21,17 +21,27 @@ function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold
     Iy_squared = Iy.^2;
     Ixy = Ix.*Iy;
     
-    G = gauss2D(0.5, (n*2)+3);
-    %
+    % create Gaussian to smooth the image (window bigger than the
+    % neighborhood window of H)
+    G = gauss2D(sigma_smooth, (n*2) + 3);
+    
+    % calculate the A, B and C matrix
     A = imfilter(Ix_squared, G);
     B = imfilter(Ixy, G);
     C = imfilter(Iy_squared, G);
     
+    % get size of A to create H and loop over all the rows and columns.
     [h, w] = size(A);
-    H = zeros(h+2*n, w+2*n);
+    
+    % create H of ones, so H is padded with ones, this is to make sure the
+    % edges are not detected as corners (they would be if H is zero padded,
+    % making the pixel value bigger than it's neighborhood with a higher
+    % probability
+    H = ones(h+2*n, w+2*n);
     row_list = [];
     column_list = [];
     
+    % construct the H matrix
     for col = 1:w
         for row = 1:h
             A_xy = A(row, col);
@@ -44,6 +54,7 @@ function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold
     [h_n, w_n] = size(H);
     zero_matrix = zeros((n*2)+1,(n*2)+1);
     
+    % check if there if the pixel value is an edge. 
     for col = (1+n):(w_n-n)
         for row = (1+n):(h_n-n)
             pixel_value = H(row, col);
