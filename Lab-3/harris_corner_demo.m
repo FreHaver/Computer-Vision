@@ -3,8 +3,11 @@ clear all
 close all
 clc
 
-% im_1 = imread('person_toy/00000001.jpg');
-im_1 = imread('pingpong/0000.jpeg');
+% comment or uncomment the line to determine the image that is used.
+% person_toy: treshold 0.001
+% pingpong  : treshold 0.002
+im_1 = imread('person_toy/00000001.jpg');
+% im_1 = imread('pingpong/0000.jpeg');
 
 % pick an rotation angle and rotate the image with it
 rotation_angle = 0;
