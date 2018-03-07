@@ -1,8 +1,8 @@
 function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold, neighborhood, sigma_smooth, show_figures)
-    % convert the image to double to be able to do computations
+    % convert the image to grayscale and double to be able to do computations
     gray_image = im2double(rgb2gray(rgb_image));
         
-    % set n to neighborhood for notation
+    % set neighborhood to n for notation
     n = neighborhood;
     
     % construct a Gaussian filter to compute the x and y gradients
@@ -16,7 +16,7 @@ function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold
     Ix = imfilter(gray_image, Gx, 'conv');
     Iy = imfilter(gray_image, Gy, 'conv');
 
-    % 
+    % square or multiply the derivatives
     Ix_squared = Ix.^2;
     Iy_squared = Iy.^2;
     Ixy = Ix.*Iy;
@@ -34,9 +34,9 @@ function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold
     [h, w] = size(A);
     
     % create H of ones, so H is padded with ones, this is to make sure the
-    % edges are not detected as corners (they would be if H is zero padded,
-    % making the pixel value bigger than it's neighborhood with a higher
-    % probability
+    % edges are not detected as corners (they would be quicker detected as
+    % corners if H would be zero padded, as all the other values in H are
+    % smaller than 0.02
     H = ones(h+2*n, w+2*n);
     row_list = [];
     column_list = [];
@@ -50,11 +50,15 @@ function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold
             H(row+n, col+n) = (A_xy*C_xy - B_xy^2) - 0.04*(A_xy+C_xy)^2;
         end
     end
-        
+    
+    % get the new size of H
     [h_n, w_n] = size(H);
+    
+    % create a matrix of zeros with the size of the neighborhood to be
+    % inspected in H
     zero_matrix = zeros((n*2)+1,(n*2)+1);
     
-    % check if there if the pixel value is an edge. 
+    % check if the pixel value is an edge. 
     for col = (1+n):(w_n-n)
         for row = (1+n):(h_n-n)
             pixel_value = H(row, col);
@@ -67,11 +71,14 @@ function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold
             end
         end
     end 
-
+    
+    % create dots on every corner pixel
     for i=1:length(row_list)
         rgb_image(row_list(i), column_list(i), :) = [1, 0, 0];
     end
     
+    % if show_figures is set to true, show the iamges of the x-gradient,
+    % y-gradient and the detected corners in the rgb image
     if show_figures
         figure;
         imshow(Ix);
@@ -82,11 +89,12 @@ function [H, row_list, column_list] = harris_corner_detector(rgb_image, treshold
         figure;    
         imshow(rgb_image);
         hold on
+        % draw a circle wit radius 2 around every corner pixel
         t=0:0.1:2*pi;
-        radio = 2;
+        radius = 2;
         for i=1:length(row_list)
-            y = row_list(i) + radio*sin(t);
-            x = column_list(i) + radio*cos(t);
+            y = row_list(i) + radius*sin(t);
+            x = column_list(i) + radius*cos(t);
             plot(x,y,'g');
         end
         title('corner detection');
