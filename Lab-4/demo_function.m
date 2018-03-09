@@ -12,7 +12,7 @@ Ib = imread('boat2.pgm');
 
 % use the matching points from keypoint_matching to find the transformation
 % from image 1 to image 2.
-[m_remember, t_remember, n_inliers, a_inliers, b_inliers] = ransac(x_a, x_b, y_a, y_b, 50, 60);
+[m_remember, t_remember, n_inliers, a_inliers, b_inliers] = ransac(x_a, x_b, y_a, y_b, 50, 100);
 
 fprintf('number of inliers: %i \n', n_inliers); 
 
