@@ -1,6 +1,5 @@
 function [matches, scores, x_a, x_b, y_a, y_b] = keypoint_matching(image1, image2)
 
-
 Ia_single = single(image1);
 Ib_single = single(image2);
 [fa, da] = vl_sift(Ia_single);
