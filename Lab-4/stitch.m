@@ -1,21 +1,11 @@
 function [stitched_im] = stitch(left_im, right_im, p, n, show)
     
-    [stitched_im, M, t, ~, ~] = affine_transform(right_im, left_im, p, n, show);
+    [~, M, t, ~, ~] = affine_transform(right_im, left_im, p, n, show);
     
     [h_l, w_l] = size(left_im);
     [h_r, w_r] = size(right_im);
-    
-    % for checking xlim ylim
-    m_trans = horzcat(vertcat(M, t'), [0; 0; 1]);
-    tform = affine2d(m_trans);
-    new_Ia2 = imwarp(right_im, tform);
-    
-    figure;
-    imagesc(new_Ia2);
-%     [xlim, ylim] = outputLimits(tform, [1 w], [1 h]);
-%     xlim
-%     ylim
-    corners = [1, 1, w_r, w_r; w_r, h_r, 1, h_r];
+
+    corners = [1, 1; w_r, h_r];
     xlims = zeros(4, 1);
     ylims = zeros(4, 1);
     for i = 1:length(corners)
@@ -36,14 +26,18 @@ function [stitched_im] = stitch(left_im, right_im, p, n, show)
     width = round(xlim(2) - xlim(1));
     height = round(ylim(2) - ylim(1));
 
+    [h, w] = size(left_im);
     % Initialize panorama.
     stitched = zeros(height, width);
-    size(stitched)
-    
-    [h,w] = size(right_im);
-    left_image = left_im;
     for row = 1:h
         for col = 1:w
+            stitched(row, col) = left_im(row, col);
+        end
+    end
+    
+    [h_r, w_r] = size(right_im);
+    for row = 1:h_r
+        for col = 1:w_r
             new_coordinates = M * [row; col] + t;
             new_row = round(new_coordinates(1));
             new_col = round(new_coordinates(2));
@@ -55,9 +49,8 @@ function [stitched_im] = stitch(left_im, right_im, p, n, show)
             end
             left_row = max(1, new_row - 2);
             left_col = max(1, new_col - 2);
-            left_image(left_row:new_row + 2, left_col: new_col+2) = right_im(row, col);
+            stitched(left_row: new_row + 2, left_col: new_col + 2) = right_im(row, col);
         end
     end
-    figure;
-    imshow(left_image);
+    stitched_im = stitched;
 end
