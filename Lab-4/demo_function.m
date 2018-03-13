@@ -7,33 +7,8 @@ clc
 Ia = imread('boat1.pgm');
 Ib = imread('boat2.pgm');
 
-% use the keypoint_matching function to find the matching points in the two
-% images.
-[matches, scores, x_a, x_b, y_a, y_b, f_a, f_b] = keypoint_matching(Ia, Ib);
-
-% use the matching points from keypoint_matching to find the transformation
-% from image 1 to image 2.
-[m_remember, t_remember, n_inliers, a_inliers, b_inliers] = ransac(x_a, x_b, y_a, y_b, 50, 50);
-
-fprintf('number of inliers: %i \n', n_inliers); 
-
-[h,w] = size(Ia);
-new_Ia = zeros(h, w);
-count = 0;
-for row = 1:h
-    for col = 1:w
-        new_coordinates = m_remember * [row; col] + t_remember;
-        new_row = round(new_coordinates(1));
-        new_col = round(new_coordinates(2));
-        if new_row <= 0
-            new_row = 1;
-        end
-        if new_col <= 0
-            new_col = 1;
-        end
-        new_Ia(new_row, new_col) = Ia(row, col);
-    end
-end
+% perform affine transformation algorithm
+[new_Ia, m_remember, t_remember, a_inliers, b_inliers] = affine_transform(Ia, Ib, true);
 
 % result comparison with matlab built-in functions (used imwarp instead of 
 m_trans = horzcat(vertcat(m_remember, t_remember'), [0; 0; 1]);
