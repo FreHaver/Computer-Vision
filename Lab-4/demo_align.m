@@ -8,7 +8,9 @@ Ia = imread('boat1.pgm');
 Ib = imread('boat2.pgm');
 
 % perform affine transformation algorithm
-[new_Ia, m_remember, t_remember, a_inliers, b_inliers] = affine_transform(Ia, Ib, 50, 50, true);
+% CHANGE: location of Ib and Ia as input to run transformation other way
+% around
+[new_Ia, m_remember, t_remember, a_inliers, b_inliers] = affine_transform(Ia, Ib, 50, 50, 0, true);
 
 % result comparison with matlab built-in functions (used imwarp instead of 
 m_trans = horzcat(vertcat(m_remember, t_remember'), [0; 0; 1]);
@@ -17,24 +19,13 @@ new_Ia2 = imwarp(Ia, T);
 
 % create a new figure
 figure(3) ; clf ;
-% show the two images side to side
+
+% convert transformed image
+new_Ia = mat2gray(new_Ia);
+
+% filter out salt-and-pepper noise with small median filter
+% CHANGE: filter of size [2 2] for image Ia to Ib and [3 3] for Ib to Ia
+new_Ia = medfilt2(new_Ia, [2 2]);
+
+% show the new image
 imshow(mat2gray(new_Ia));
-% figure(4) ; clf ;
-% imshow(mat2gray(new_Ia2));
-
-% figure(4) ; clf ;
-% imagesc(Ib);
-% imagesc(cat(2, Ib, new_Ia)) ;
-
-% get the x and y coordinates of the inliers, (the x coordinates for the
-% second image are shifted because the images are shown side by side)
-xa = a_inliers(1,:) ;
-xb = b_inliers(1,:) + size(Ia,2) ;
-ya = a_inliers(2,:) ;
-yb = b_inliers(2,:);
-
-% draw lines between the interest points in image 1 and the interest points
-% in image 2. 
-% hold on ;
-% h = line([xa ; xb], [ya ; yb]) ;
-% set(h,'linewidth', 1, 'color', 'b') ;
