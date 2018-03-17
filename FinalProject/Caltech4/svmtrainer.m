@@ -10,8 +10,10 @@ n_categories = length(categories);
 
 for b=1:n_categories
     for a=1:n_s
-        da = retrieve_descriptors(categories(b), [n_svm(a), n_svm(a)]);
-        index = vl_ikmeanspush(uint8(da), int32(C));
+        da = retrieve_descriptors(categories(b), [n_svm(a), n_svm(a)],'RGB', false);
+        kdforest = vl_kdtreebuild(da);
+        [index, ~] = vl_kdtreequery(kdforest, da, C) ;
+%         index = vl_ikmeanspush(uint8(da), int32(C));
         hist = histogram(index, n_clusters, 'Normalization', 'probability');
         hist_data = hist.Values;
         hist_row = a + n_s * (b-1);
