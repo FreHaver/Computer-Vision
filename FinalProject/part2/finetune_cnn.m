@@ -1,8 +1,8 @@
 function [net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
-run(fullfile(fileparts(mfilename('fullpath')), ...
-  '..', '..', '..', 'matlab', 'vl_setupnn.m')) ;
+% run(fullfile(fileparts(mfilename('fullpath')), ...
+%   '..', '..', '..', 'matlab', 'vl_setupnn.m')) ;
 
 opts.modelType = 'lenet' ;
 [opts, varargin] = vl_argparse(opts, varargin) ;
@@ -83,7 +83,33 @@ classes = {'airplanes', 'cars', 'faces', 'motorbikes'};
 splits = {'train', 'test'};
 
 %% TODO: Implement your loop here, to create the data structure described in the assignment
+data = zeros(32, 32, 3, 1);
+labels = [];
+sets = [];
+for i = 1:length(classes)
+    
+    for j = 1:length(splits)
+        % get the filenames of the specific category
+        filename = fullfile('..', 'Caltech4', 'ImageSets', strcat(classes{i}, '_', splits{j}, '.txt'));
+        file_open = fopen(filename);
 
+        formatSpec = '%22c';
+        A = strcat(strsplit(fscanf(file_open, formatSpec), '\n'), '.jpg');
+        fclose(file_open);
+
+        % make a list with all the file names in that map
+        file_list = fullfile('..', 'Caltech4', 'ImageData', A); 
+
+        % loop over filenames from n_files(1) till n_files(2)
+        for h = 1:length(file_list)
+            im_color = im2double(imread(file_list{h}));
+            im_color = imresize(im_color, [32 32]);
+            data = cat(4, data, im_color);
+            labels = vertcat(labels, i);
+            sets = vertcat(sets, j);
+        end
+    end
+end
 
 %%
 % subtract mean
