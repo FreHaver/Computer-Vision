@@ -47,7 +47,6 @@ motorbikes_train/img046
 motorbikes_train/img047
 motorbikes_train/img048
 motorbikes_train/img049
-motorbikes_train/img050
 motorbikes_train/img051
 motorbikes_train/img052
 motorbikes_train/img053
