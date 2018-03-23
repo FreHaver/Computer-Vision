@@ -1,8 +1,8 @@
-function [net, info, expdir] = finetune_cnn(varargin)
+    Thfunction [test, net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
-% run(fullfile(fileparts(mfilename('fullpath')), ...
-%   '..', '..', '..', 'matlab', 'vl_setupnn.m')) ;
+run(fullfile(fileparts(mfilename('fullpath')), ...
+  '..', '..', '..', '..', '..', '..', 'MATLAB', 'matconvnet-1.0-beta25', 'matlab', 'vl_setupnn.m')) ;
 
 opts.modelType = 'lenet' ;
 [opts, varargin] = vl_argparse(opts, varargin) ;
@@ -20,22 +20,20 @@ opts.train = struct() ;
 opts = vl_argparse(opts, varargin) ;
 if ~isfield(opts.train, 'gpus'), opts.train.gpus = []; end;
 
-opts.train.gpus = [1];
+opts.train.gpus = [];
 
 
 
 %% update model
-
 net = update_model();
 
 %% TODO: Implement getCaltechIMDB function below
-
 if exist(opts.imdbPath, 'file')
-  imdb = load(opts.imdbPath) ;
+    imdb = load(opts.imdbPath);
 else
-  imdb = getCaltechIMDB() ;
-  mkdir(opts.expDir) ;
-  save(opts.imdbPath, '-struct', 'imdb') ;
+    imdb = getCaltechIMDB() ;
+    mkdir(opts.expDir) ;
+    save(opts.imdbPath, '-struct', 'imdb') ;
 end
 
 %%
@@ -46,6 +44,7 @@ net.meta.classes.name = imdb.meta.classes(:)' ;
 % -------------------------------------------------------------------------
 
 trainfn = @cnn_train ;
+test = imdb;
 [net, info] = trainfn(net, imdb, getBatch(opts), ...
   'expDir', opts.expDir, ...
   net.meta.trainOpts, ...
@@ -102,14 +101,18 @@ for i = 1:length(classes)
 
         % loop over filenames from n_files(1) till n_files(2)
         for h = 1:length(file_list)
-            im_color = im2double(imread(file_list{h}));
+            im_color = single(imread(file_list{h}));
             im_color = imresize(im_color, [32 32]);
+            if length(size(im_color)) == 2
+                continue
+            end
             data = cat(4, data, im_color);
-            labels = vertcat(labels, i);
-            sets = vertcat(sets, j);
+            labels = horzcat(labels, single(i));
+            sets = horzcat(sets, single(j));
         end
     end
 end
+data = data(:, :, :, 2:end);
 
 %%
 % subtract mean

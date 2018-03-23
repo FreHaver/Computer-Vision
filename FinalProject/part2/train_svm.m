@@ -1,4 +1,4 @@
-function train_svm(nets, data)
+function [cnn, svm_pre, svm_post] = train_svm(nets, data)
 
 %% replace loss with the classification as we will extract features
 nets.pre_trained.layers{end}.type = 'softmax';
@@ -14,9 +14,26 @@ nets.fine_tuned.layers{end}.type = 'softmax';
 [svm.fine_tuned.predictions, svm.fine_tuned.accuracy] = get_predictions(svm.fine_tuned);
 
 fprintf('\n\n\n\n\n\n\n\n');
+cnn = nn.accuracy;
+svm_pre = svm.pre_trained.accuracy(1);
+svm_post = svm.fine_tuned.accuracy(1);
 
 fprintf('CNN: fine_tuned_accuracy: %0.2f, SVM: pre_trained_accuracy: %0.2f, fine_tuned_accuracy: %0.2f\n', nn.accuracy, svm.pre_trained.accuracy(1), svm.fine_tuned.accuracy(1));
 
+% get foldername
+foldername = strcat("hyperpar_results/", num2str(nets.fine_tuned.meta.trainOpts.numEpochs), "_", num2str(num2str(nets.fine_tuned.meta.trainOpts.batchSize)));
+
+% save pre_trained features and labels for tsne
+features_pre = squeeze(svm.pre_trained.testset.features);
+labels_pre = squeeze(svm.pre_trained.testset.labels);
+save(strcat(foldername, "/pre_trained_features_testset.mat") , 'features_pre')
+save(strcat(foldername, "/pre_trained_labels_testset.mat") , 'labels_pre')
+
+% save fine_tuned features and labels for tsne
+features_post = squeeze(svm.fine_tuned.testset.features);
+labels_post = squeeze(svm.fine_tuned.testset.labels);
+save(strcat(foldername, "/fine_tuned_features_testset.mat") , 'features_post')
+save(strcat(foldername, "/fine_tuned_labels_testset.mat") , 'labels_post')
 end
 
 
@@ -46,8 +63,6 @@ function [predictions, accuracy] = get_predictions(data)
 best = train(data.trainset.labels, data.trainset.features, '-C -s 0');
 model = train(data.trainset.labels, data.trainset.features, sprintf('-c %f -s 0', best(1))); % use the same solver: -s 0
 [predictions, accuracy, ~] = predict(data.testset.labels, data.testset.features, model);
-
-
 end
 
 function [trainset, testset] = get_svm_data(data, net)
@@ -61,7 +76,7 @@ for i = 1:size(data.images.data, 4)
     
     res = vl_simplenn(net, data.images.data(:, :,:, i));
     feat = res(end-3).x; feat = squeeze(feat);
-    
+
     if(data.images.set(i) == 1)
         
         trainset.features = [trainset.features feat];
