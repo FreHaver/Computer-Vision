@@ -228,7 +228,6 @@ motorbikes_train/img228
 motorbikes_train/img229
 motorbikes_train/img230
 motorbikes_train/img231
-motorbikes_train/img232
 motorbikes_train/img233
 motorbikes_train/img234
 motorbikes_train/img235

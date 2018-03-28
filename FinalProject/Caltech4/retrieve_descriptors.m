@@ -3,14 +3,8 @@ function [descriptor_matrix] = retrieve_descriptors(categories, n_files, colorsp
 for j=1:length(categories)
     % get the filenames of the images in the training set of a specific
     % category
-    filename = strcat('ImageSets/', categories(j), '_train.txt');
-    file_open = fopen(filename);
-    formatSpec = '%22c';
-    A = strcat(strsplit(fscanf(file_open,formatSpec), '\n'), '.jpg');
-    fclose(file_open);
+    [file_list, ~, ~] = get_file_list("train", categories(j));
     
-    % make a list with all the file names in that map
-    file_list = fullfile('ImageData', A); 
     
     % initialize the matrix with the first feature descriptors
     da = image_to_descriptors(file_list(n_files(1)), colorspace, dense);

@@ -4,14 +4,15 @@ function [new_da] = color_descriptors(fa, I_color, colorspace, dense)
 switch colorspace
     case "RGB"
         I_color = I_color;
-    case "rgb"
-        I_color = rgb2rgbnormrgb(I_color);
+    case "norm_rgb"
+        I_color = 255*single(rgb2normedrgb(I_color));
     case "opponent"
-        I_color = rgb2opponent(I_color);
+        I_color = single(rgb2opponent(I_color));
+    case {'hsv','HSV'}
+        I_color = single(rgb2hsv(I_color));
     otherwise
         fprintf('%s colorspace not implemented \n', colorspace)
 end
-
 
 if dense
     I_smooth = vl_imsmooth(I_color, 1);
@@ -26,5 +27,4 @@ else
     [~, da_3] = vl_sift(ch_3, 'Frames', fa);
 end
 new_da = vertcat(da_1, da_2, da_3); 
-fprintf('descriptor size for this image: %i, %i \n', size(new_da));
 end

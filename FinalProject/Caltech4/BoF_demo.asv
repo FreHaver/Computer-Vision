@@ -40,15 +40,13 @@ DENSE = false;
 
 [ap_air, ap_car, ap_fac, ap_mot, air_im, car_im, fac_im, mot_im, ...
     air_sc, car_sc, fac_sc, mot_sc] = main_bof(NUM_CLUS_IMAGES, NUM_CLUSTERS, NUM_SVM, COLORSPACE, DENSE);
-map = (ap_air + ap_car + ap_fac + ap_mot) / 4;
 
 fprintf('--\nAverage Precision of airplanes: %f \n', ap_air)
 fprintf('Average Precision of cars: %f \n', ap_car)
-fprintf('Average Precision of faces: %f \n', ap_fac)
-fprintf('Average Precision of motorbikes: %f \n', ap_fac)
-fprintf('Mean Average Precision: %f \n', map)
+fprintf('Average Precision of cars: %f \n', ap_car)
+fprintf('Average Precision of cars: %f \n', ap_car)
 
 write_to_html(air_im, car_im, fac_im, mot_im, NUM_CLUS_IMAGES, NUM_CLUSTERS, NUM_SVM, COLORSPACE, DENSE);
 
-
+map = (ap_air + ap_car + ap_fac + ap_mot) / 4;
 visualize_tsne;

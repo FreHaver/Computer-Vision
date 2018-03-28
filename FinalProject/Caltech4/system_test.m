@@ -1,58 +1,142 @@
-function [images, score_list, annotation] = system_test(category, C, n_clusters, colorspace, dense, weight, bias)
+function [accuracy, air_im, car_im, fac_im, mot_im, ...
+    air_sc, car_sc, fac_sc, mot_sc, ...
+    air_an, car_an, fac_an, mot_an] = system_test(w_a, w_c, w_f, w_m, ...
+    b_a, b_c, b_f, b_m, C, n_clusters, colorspace, dense)
 
-% open text file of the specific category with the test images
-fprintf('retrieving test images for category %s \n', category)
-filename = strcat('Annotation/', category, '_test.txt');
-file_open = fopen(filename, 'r');
-formatSpec = '%22c';
-A = fscanf(file_open,formatSpec);
-B = strsplit(A, '\n');
-b_len = length(B);
-annotation = zeros(b_len-1,1);
+[files, ~, n_files] = get_file_list("test", "airplanes");
 
-% for every line, split the filename from the annotation
-for j=1:(b_len - 1)
-   splitted = strsplit(char(B(j)), ' ');
-   imname(j) = splitted(1);
-   annotation(j) = str2num(char(splitted(2)));
-end
-D = strcat(imname, '.jpg');
-fclose(file_open);
-file_list = fullfile('ImageData', D); 
+air_sc = zeros(n_files - 1, 1);
+car_sc = zeros(n_files - 1, 1);
+fac_sc = zeros(n_files - 1, 1);
+mot_sc = zeros(n_files - 1, 1);
 
-% for all the images in the text file, retrieve the score with the weight
-% and bias/offset. Also store the histogram data in a list
-score_list = zeros(b_len-1,1);
-hist_list = zeros(b_len-1, n_clusters);
-lab_list = zeros(b_len-1,1);
-for j=1:(b_len - 1)
-    da = image_to_descriptors(file_list(j), colorspace, dense);
-    index = vl_ikmeanspush(uint8(da), int32(C));
-    hist = histogram(index, n_clusters, 'Normalization', 'probability');
-    hist_data = 100 * hist.Values;
+air_an = zeros(n_files - 1, 1);
+car_an = zeros(n_files - 1, 1);
+fac_an = zeros(n_files - 1, 1);
+mot_an = zeros(n_files - 1, 1);
+
+hist_list = zeros(n_files - 1, n_clusters);
+lab_list = zeros(n_files - 1, 1);
+
+counter = 0;
+air_count = 0;
+car_count = 0;
+fac_count = 0;
+mot_count = 0;
+
+
+for j=1:(n_files - 1)
+    da = image_to_descriptors(files(j), colorspace, dense);
+    hist_data = get_hist_values(da, C, n_clusters);
     hist_list(j,:) = hist_data;
-    if contains(file_list(j), "air")
+    
+    air_sc(j) = dot(w_a, hist_data) + b_a;
+    car_sc(j) = dot(w_c, hist_data) + b_c;
+    fac_sc(j) = dot(w_f, hist_data) + b_f;
+    mot_sc(j) = dot(w_m, hist_data) + b_m;
+    
+    
+    if contains(files(j), "air")
         lab_list(j) = 1;
-    elseif contains(file_list(j), "car")
+        air_an(j) = 1;
+        if air_sc(j) > 0
+            air_count = air_count + 1;
+        end
+        if car_sc(j) < 0
+            car_count = car_count + 1;
+        end
+        if fac_sc(j) < 0
+            fac_count = fac_count + 1;
+        end
+        if mot_sc(j) < 0
+           	mot_count = mot_count + 1;
+        end       
+    elseif contains(files(j), "car")
         lab_list(j) = 2;
-    elseif contains(file_list(j), "fac")
+        car_an(j) = 1;
+        if air_sc(j) < 0
+            air_count = air_count + 1;
+        end
+        if car_sc(j) > 0
+            car_count = car_count + 1;
+        end
+        if fac_sc(j) < 0
+            fac_count = fac_count + 1;
+        end
+        if mot_sc(j) < 0
+           	mot_count = mot_count + 1;
+        end
+    elseif contains(files(j), "fac")
         lab_list(j) = 3;
+        fac_an(j) = 1;
+        if air_sc(j) < 0
+            air_count = air_count + 1;
+        end
+        if car_sc(j) < 0
+            car_count = car_count + 1;
+        end
+        if fac_sc(j) > 0
+            fac_count = fac_count + 1;
+        end
+        if mot_sc(j) < 0
+           	mot_count = mot_count + 1;
+        end
     else
         lab_list(j) = 4;
+        mot_an(j) = 1;
+        if air_sc(j) < 0
+            air_count = air_count + 1;
+        end
+        if car_sc(j) < 0
+            car_count = car_count + 1;
+        end
+        if fac_sc(j) < 0
+            fac_count = fac_count + 1;
+        end
+        if mot_sc(j) > 0
+           	mot_count = mot_count + 1;
+        end
     end
-    score_list(j) = dot(weight, hist_data) + bias;
+    
+    [~, index] = max([air_sc(j), car_sc(j), fac_sc(j), mot_sc(j)]);
+    if index == lab_list(j)
+        counter = counter + 1;
+    end
+    
 end 
 
-[score_list, sort_index] = sort(score_list, 'descend');
-images = imname(sort_index);
-annotation = annotation(sort_index);
+accuracy = counter / n_files;
+air_acc = air_count / n_files;
+car_acc = car_count / n_files;
+fac_acc = fac_count / n_files;
+mot_acc = mot_count / n_files;
+
+
+[air_sc, air_sort_index] = sort(air_sc, 'descend');
+[car_sc, car_sort_index] = sort(car_sc, 'descend');
+[fac_sc, fac_sort_index] = sort(fac_sc, 'descend');
+[mot_sc, mot_sort_index] = sort(mot_sc, 'descend');
+
+air_im = files(air_sort_index);
+car_im = files(car_sort_index);
+fac_im = files(fac_sort_index);
+mot_im = files(mot_sort_index);
+
+air_an = air_an(air_sort_index);
+car_an = car_an(car_sort_index);
+fac_an = fac_an(fac_sort_index);
+mot_an = mot_an(mot_sort_index);
+
 mappedX = tsne(hist_list);
 x = mappedX(:,1);
 y = mappedX(:,2);
 
-label_name = strcat('label_',string(category),'.mat');
-save(label_name, 'lab_list')
-matrix_name = strcat('xy_', string(category),'.mat');
-save(matrix_name, 'x', 'y');
+save('label.mat', 'lab_list')
+save('xy.mat', 'x', 'y');
+
+fprintf('the accuracy of for airplane svm: %f \n', air_acc)
+fprintf('the accuracy of for cars svm:     %f \n', car_acc)
+fprintf('the accuracy of for faces svm:    %f \n', fac_acc)
+fprintf('the accuracy of for motorbikes svm: %f \n', mot_acc)
 
 end

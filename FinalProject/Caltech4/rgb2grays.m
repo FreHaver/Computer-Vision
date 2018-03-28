@@ -27,11 +27,11 @@ else
             if strcmp(method, 'lightness')
                 max_rgb = max([R_element, G_element, B_element]);
                 min_rgb = min([R_element, G_element, B_element]);
-                grayscale(row,col, :) = (max_rgb - min_rgb) / 2;
+                grayscale(row,col) = (max_rgb - min_rgb) / 2;
             elseif strcmp(method, 'average')
-                grayscale(row,col) = ( R_element + G_element + B_element) / 3;
+                grayscale(row,col) = single(( R_element + G_element + B_element) / 3);
             elseif strcmp(method, 'luminosity')
-                grayscale(row, col, :) = 0.21 * R_element + 0.72 * G_element + 0.07 * B_element;
+                grayscale(row, col) = 0.21 * R_element + 0.72 * G_element + 0.07 * B_element;
             end
         end
     end
