@@ -1,10 +1,9 @@
 function net = update_model(varargin)
-opts.networkType = 'simplenn' ;
+opts.networkType = 'augmentednn' ;
 opts = vl_argparse(opts, varargin) ;
 
 
 %% TODO: PLAY WITH THESE PARAMETERTS TO GET A BETTER ACCURACY
-
 lr_prev_layers = [.2, 2];
 lr_new_layers  = [1, 4]; 
 
@@ -12,13 +11,13 @@ lr = lr_prev_layers ;
 
 % Meta parameters
 net.meta.inputSize = [32 32 3] ;
-net.meta.trainOpts.learningRate = [ 0.005*ones(1,20) ...
-                                    0.0005*ones(1,20)...
-                                    0.00005*ones(1,10)...
+net.meta.trainOpts.learningRate = [ 0.001*ones(1,20) ...
+                                    0.0001*ones(1,20)...
+                                    0.00001*ones(1,10)...
                                     ] ;
 net.meta.trainOpts.weightDecay = 0.0001 ;
-net.meta.trainOpts.batchSize = 100 ;
-net.meta.trainOpts.numEpochs = 120 ;
+net.meta.trainOpts.batchSize = 50 ;
+net.meta.trainOpts.numEpochs = 40 ;
 
 %% Define network 
 net.layers = {} ;
@@ -72,7 +71,6 @@ net.layers{end+1} = struct('type', 'relu') ;
 
 %% TODO: Define the structure here, so that the network outputs 4-class rather than 10 (as in the pretrained network)
 % Block 5
-
 NEW_INPUT_SIZE  = 64;
 NEW_OUTPUT_SIZE = 4;
 

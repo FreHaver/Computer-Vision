@@ -9,8 +9,8 @@ run(fullfile(fileparts(mfilename('fullpath')), ...
 %% uncomment this to run tsne on all network features in folder hyperpar_results and save results to .mat file
 % feats = run_tsne();
 
-%% uncoment this to get accuracy of all networks in folder hyperpar_results and write to var
-accs = get_accuracy();
+%% uncomment this to get accuracy of all networks in folder hyperpar_results and write to var
+accs = get_accuracy();  
 
 %% uncomment this to plot all tsnes from folder tsne
 % show_tsnes()
@@ -30,7 +30,7 @@ for i = 1:length(epochs)
     for j = 1:length(batches)
         
         % open folder containing files from these settings
-        foldername = strcat("hyperpar_results/", num2str(epochs(i)), "_", num2str(batches(j)));
+        foldername = strcat("trained_nets/", num2str(epochs(i)), "_", num2str(batches(j)));
         
         % loop over fine tuned and pre trained net
         filenames = ["fine_tuned", "pre_trained"];
@@ -74,7 +74,7 @@ for i = 1:length(epochs)
         
         % open correct folder and load finetuned and pretrained net and
         % data
-        foldername = strcat("hyperpar_results/", num2str(epochs(i)), "_", num2str(batches(j)));
+        foldername = strcat("trained_nets/", num2str(epochs(i)), "_", num2str(batches(j)));
         nets.fine_tuned = load(fullfile(foldername, strcat("epoch-", num2str(epochs(i)), "_batch-", num2str(batches(j)), ".mat"))); nets.fine_tuned = nets.fine_tuned.net;
         nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); nets.pre_trained = nets.pre_trained.net; 
         data = load(fullfile("data", "cnn_assignment-lenet", 'imdb-caltech.mat'));
