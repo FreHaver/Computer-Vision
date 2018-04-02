@@ -13,7 +13,7 @@ run(fullfile(fileparts(mfilename('fullpath')), ...
 [net, info, expdir] = finetune_cnn();
 
 %% extract features and train svm
-nets.fine_tuned = load(fullfile(expdir, 'net-epoch-40.mat')); nets.fine_tuned = nets.fine_tuned.net;
+nets.fine_tuned = load(fullfile(expdir, 'net-epoch-60.mat')); nets.fine_tuned = nets.fine_tuned.net;
 nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); nets.pre_trained = nets.pre_trained.net; 
 data = load(fullfile(expdir, 'imdb-caltech.mat'));
 
@@ -22,3 +22,5 @@ vl_simplenn_display(nets.pre_trained)
 
 %% train classifier on extracted features
 train_svm(nets, data);
+
+%% show templates

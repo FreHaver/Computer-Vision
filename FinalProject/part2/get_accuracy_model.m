@@ -4,6 +4,7 @@ function accuracies = get_accuracy_model(modelname)
 %               freezing-120epochs
 %               augmented-rotation, augmented-noise, 
 %               augmented-saturation, augmented-none, augmented-combination
+%               augmented-finetunenoise
 %               best-model, worst-model
 
 % initialize accuracies

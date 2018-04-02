@@ -18,7 +18,7 @@ To get accuracy of other models mentioned in paper, choose options and run:
 Where option can be: 
 	      best-model, worst-model (to get models from t-SNE visualizations)
               freezing-40epochs, freezing-80epochs, freezing-120epochs
-              augmented-rotation, augmented-noise, augmented-saturation, augmented-none, augmented-combination
+              augmented-rotation, augmented-noise, augmented-saturation, augmented-none, augmented-combination, augmented-finetunenoise
 
 TRAINING
 To train new models, make sure the folder part2/data/cnn_assignment-lenet has no trained networks in it

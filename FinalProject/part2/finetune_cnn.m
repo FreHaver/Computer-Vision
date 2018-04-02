@@ -19,6 +19,7 @@ opts.networkType = 'augmentednn' ;
 % possibilities of augmentation: rotate, saturation, noise, none or
 % combination (combines best working augmentations)
 opts.augmentation = 'saturation' ;
+opts.augmentationFrequency = 0.8;
 opts.train = struct() ;
 opts = vl_argparse(opts, varargin) ;
 if ~isfield(opts.train, 'gpus'), opts.train.gpus = []; end;
@@ -62,7 +63,7 @@ switch lower(opts.networkType)
   case 'simplenn'
     fn = @(x,y) getSimpleNNBatch(x,y) ;
   case 'augmentednn'
-    fn = @(x,y) getAugmentedNNBatch(x,y,opts.augmentation) ;
+    fn = @(x,y) getAugmentedNNBatch(x,y,opts.augmentation,opts.augmentationFrequency) ;
   case 'dagnn'
     bopts = struct('numGpus', numel(opts.train.gpus)) ;
     fn = @(x,y) getDagNNBatch(bopts,x,y) ;
@@ -79,12 +80,12 @@ if rand > 0.5
 end
 end
 
-function [images, labels] = getAugmentedNNBatch(imdb, batch, type)
+function [images, labels] = getAugmentedNNBatch(imdb, batch, type, frequency)
 % -------------------------------------------------------------------------
 images = imdb.images.data(:,:,:,batch) ;
 labels = imdb.images.labels(1,batch) ;
 num = rand;
-if num > 0.5
+if num > (1 - frequency)
     switch type
         case 'none'
             images = images;
