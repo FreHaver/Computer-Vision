@@ -18,8 +18,8 @@ opts.contrastNormalization = true ;
 opts.networkType = 'augmentednn' ;
 % possibilities of augmentation: rotate, saturation, noise, none or
 % combination (combines best working augmentations)
-opts.augmentation = 'saturation' ;
-opts.augmentationFrequency = 0.8;
+opts.augmentation = 'noise' ;
+opts.augmentationFrequency = 1;
 opts.train = struct() ;
 opts = vl_argparse(opts, varargin) ;
 if ~isfield(opts.train, 'gpus'), opts.train.gpus = []; end;

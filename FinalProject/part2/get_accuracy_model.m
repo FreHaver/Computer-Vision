@@ -4,17 +4,28 @@ function accuracies = get_accuracy_model(modelname)
 %               freezing-120epochs
 %               augmented-rotation, augmented-noise, 
 %               augmented-saturation, augmented-none, augmented-combination
-%               augmented-finetunenoise
-%               best-model, worst-model
+%               augmented-finetunenoise (NOTE: this is the best performing
+%               model)
+%               besthyperpar-model, worsthyperpar-model
 
-% initialize accuracies
+%% setup libraries
+% add correct path for training and predicting from liblinear instead of
+% nnet
+rmpath('/usr/local/MATLAB/R2018a/toolbox/nnet/')
+addpath('/home/laura/Documents/AI/CV1/Computer-Vision/FinalProject/part2/liblinear-2.1/matlab/')
+
+% setup vl_feat
+run(fullfile(fileparts(mfilename('fullpath')), ...
+  '..', '..', '..', '..', '..', '..', 'MATLAB', 'matconvnet-1.0-beta25', 'matlab', 'vl_setupnn.m')) ;
+
+%% initialize accuracies
 accuracies = zeros(3, 1);
 
 % filename
-if modelname == "best-model"
+if modelname == "besthyperpar-model"
     next_folder = "40_50" ;
     filename = "epoch-40_batch-50" ;
-elseif modelname == "worst-model"
+elseif modelname == "worsthyperpar-model"
     next_folder = "80_100" ;
     filename = "epoch-80_batch-100" ;
 else
