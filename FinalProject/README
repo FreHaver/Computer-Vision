@@ -1,0 +1,27 @@
+Part 1
+
+
+Part 2
+EVALUATION
+NB
+Make sure the path to matconvnet is specified at the top of the evaluate.m file
+
+To get the accuracies of the models as claimed in the paper run in MATLAB:
+> evaluate
+
+To get the tsne visualizations of the models as shown in the paper:
+uncomment show_tsnes() in evaluate.m and run:
+> evaluate
+
+To get accuracy of other models mentioned in paper, choose options and run:
+> get_accuracy_model(option)
+Where option can be: 
+	      best-model, worst-model (to get models from t-SNE visualizations)
+              freezing-40epochs, freezing-80epochs, freezing-120epochs
+              augmented-rotation, augmented-noise, augmented-saturation, augmented-none, augmented-combination, augmented-finetunenoise
+
+TRAINING
+To train new models, make sure the folder part2/data/cnn_assignment-lenet has no trained networks in it
+Run:
+> main
+To train model with data augmentation go to finetune_cnn.m and set opts.networkType to augmentednn, choose augmentation in opts.augmentation
