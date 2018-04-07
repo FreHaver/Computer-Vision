@@ -9,7 +9,8 @@ for j=1:length(categories)
     % initialize the matrix with the first feature descriptors
     da = image_to_descriptors(file_list(n_files(1)), colorspace, dense);
     
-    % if there are more than 1 images to be 
+    % if there is more than 1 image to get the descriptors from, get the 
+    % descriptors of the other images and concatenate them
     if (n_files(2) - n_files(1)) > 0
     % loop over filenames from n_files(1) till n_files(2)
         for i=(n_files(1) + 1) : n_files(2)
@@ -22,6 +23,6 @@ for j=1:length(categories)
     end
 end
 
-% remove the first column of zeros and return descriptor matrix
+% return descriptor matrix
 descriptor_matrix = single(da);
 end

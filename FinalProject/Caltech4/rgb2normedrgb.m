@@ -1,5 +1,5 @@
 function [output_image] = rgb2normedrgb(input_image)
-% converts an RGB image into normalized rgb
+% converts an RGB image into normalized rgb image
 
 % create a matrix of the same as the input image
 rgbnorm = zeros(size(input_image));

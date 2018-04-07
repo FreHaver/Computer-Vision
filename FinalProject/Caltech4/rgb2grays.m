@@ -8,7 +8,7 @@ if strcmp(method, 'matlabfunc')
 else
     % for the other methods, first a grayscale matrix of the same size as
     % the input image is created
-    [h, w, s] = size(input_image);
+    [h, w, ~] = size(input_image);
     grayscale = zeros(h,w);
     
     % use the helper function to split the input image into its three
@@ -27,11 +27,11 @@ else
             if strcmp(method, 'lightness')
                 max_rgb = max([R_element, G_element, B_element]);
                 min_rgb = min([R_element, G_element, B_element]);
-                grayscale(row,col) = (max_rgb - min_rgb) / 2;
+                grayscale(row,col) = single((max_rgb - min_rgb) / 2);
             elseif strcmp(method, 'average')
                 grayscale(row,col) = single(( R_element + G_element + B_element) / 3);
             elseif strcmp(method, 'luminosity')
-                grayscale(row, col) = 0.21 * R_element + 0.72 * G_element + 0.07 * B_element;
+                grayscale(row, col) = single(0.21 * R_element + 0.72 * G_element + 0.07 * B_element);
             end
         end
     end
